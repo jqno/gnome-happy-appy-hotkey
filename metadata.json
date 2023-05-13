@@ -1,0 +1,10 @@
+{
+  "name": "Happy Appy Hotkey",
+  "description": "Assign hotkeys to applications to give them focus",
+  "uuid": "gnome-happy-appy-hotkey@jqno.nl",
+  "url": "https://github.com/jqno/gnome-happy-appy-hotkey/",
+  "version": 1,
+  "shell-version": [
+    "44"
+  ]
+}
