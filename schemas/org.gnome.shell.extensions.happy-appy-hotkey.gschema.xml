@@ -1,4 +1,8 @@
 <schemalist>
   <schema id="org.gnome.shell.extensions.happy-appy-hotkey" path="/org/gnome/shell/extensions/happy-appy-hotkey/">
+    <key type="as" name="shortcut-0">
+      <default><![CDATA[['<Super>x']]]></default>
+      <summary>Shortcut 0</summary>
+    </key>
   </schema>
 </schemalist>
