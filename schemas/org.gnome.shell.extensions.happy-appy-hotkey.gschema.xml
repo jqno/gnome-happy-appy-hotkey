@@ -4,5 +4,9 @@
       <default><![CDATA[['<Super>x']]]></default>
       <summary>Shortcut 0</summary>
     </key>
+    <key type="s" name="app-0">
+        <default><![CDATA['Nothing']]></default>
+      <summary>App 0</summary>
+    </key>
   </schema>
 </schemalist>
