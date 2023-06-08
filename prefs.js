@@ -1,6 +1,9 @@
 const { Adw, Gio, Gtk, GObject } = imports.gi;
 const ExtensionUtils = imports.misc.extensionUtils;
 
+const MAX_NUMBER = 20;
+const hotkeyHandles = []
+
 function init() { }
 
 function fillPreferencesWindow(win) {
@@ -9,12 +12,30 @@ function fillPreferencesWindow(win) {
     const page = new Adw.PreferencesPage();
     win.add(page);
 
-    makeShortcut(page, settings);
+    makeAddButton(page, settings);
+
+    const n = settings.get_int('number');
+    for (let i = 0; i < n; i++) {
+        makeShortcut(i, page, settings);
+    }
 }
 
-function makeShortcut(page, settings) {
-    const shortcutKey = 'shortcut-0';
-    const appKey = 'app-0';
+function makeAddButton(page, settings) {
+    const btn = new Gtk.Button({
+        label: 'Add new hotkey'
+    });
+    btn.connect('clicked', () => {
+        addHotkey(page, settings);
+    });
+
+    const group = new Adw.PreferencesGroup();
+    page.add(group);
+    group.add(btn);
+}
+
+function makeShortcut(i, page, settings) {
+    const shortcutKey = `shortcut-${i}`;
+    const appKey = `app-${i}`;
 
     const shortcut = new Gtk.Entry({
         text: settings.get_strv(shortcutKey)[0],
@@ -23,7 +44,7 @@ function makeShortcut(page, settings) {
     shortcut.connect('changed', () => {
         settings.set_strv(shortcutKey, [shortcut.text]);
     });
-    settings.connect('changed::' + shortcutKey, () => {
+    settings.connect(`changed::${shortcutKey}`, () => {
         const cursor = shortcut.get_position();
         shortcut.text = settings.get_strv(shortcutKey)[0];
         shortcut.set_position(cursor);
@@ -32,15 +53,50 @@ function makeShortcut(page, settings) {
     const app = new Gtk.Entry({
         hexpand: true
     });
-    const btn = new Gtk.Button({
+    const appBtn = new Gtk.Button({
         label: 'App'
     });
-    btn.connect('clicked', () => {
+    appBtn.connect('clicked', () => {
         createAppChooserDialog(app);
     })
-    settings.bind(appKey, app, 'text', Gio.SettingsBindFlags.DEFAULT);
 
-    addToPage(page, 'Shortcut', shortcut, 'App', app, btn, 'The cool shortcut', null);
+    const delBtn = new Gtk.Button({
+        label: 'Remove'
+    });
+    delBtn.connect('clicked', () => {
+        deleteHotkey(i, page, settings);
+    })
+
+    settings.bind(appKey, app, 'text', Gio.SettingsBindFlags.DEFAULT);
+    const handle = addToPage(page, 'Shortcut', shortcut, 'App', app, appBtn, delBtn, null, null);
+
+    hotkeyHandles.push(handle);
+}
+
+function addHotkey(page, settings) {
+    const n = settings.get_int('number');
+
+    if (n < MAX_NUMBER) {
+        makeShortcut(n, page, settings);
+
+        settings.set_int('number', n + 1);
+    }
+}
+
+function deleteHotkey(index, page, settings) {
+    let n = settings.get_int('number') - 1;
+
+    for (let i = index; i < n; i++) {
+        settings.set_strv(`shortcut-${i}`, settings.get_strv(`shortcut-${i + 1}`));
+        settings.set_string(`app-${i}`, settings.get_string(`app-${i + 1}`));
+    }
+    settings.reset(`shortcut-${n}`);
+    settings.reset(`app-${n}`);
+
+    page.remove(hotkeyHandles[n]);
+    hotkeyHandles.pop();
+
+    settings.set_int('number', n);
 }
 
 function createAppChooserDialog(textbox) {
@@ -111,8 +167,8 @@ function updateApp(textbox, appName) {
     textbox.set_text(appName);
 }
 
-function addToPage(page, labelText1, widget1, labelText2, widget2, button2, explanationText1, explanationText2) {
-    const grid = createGrid(page);
+function addToPage(page, labelText1, widget1, labelText2, widget2, button2, button3, explanationText1, explanationText2) {
+    const [handle, grid] = createGrid(page);
 
     const label1 = new Gtk.Label({ label: labelText1 + ':' });
     grid.attach(label1, 0, 0, 1, 1);
@@ -125,6 +181,9 @@ function addToPage(page, labelText1, widget1, labelText2, widget2, button2, expl
         grid.attach(button2, 2, 1, 1, 1);
     }
 
+    if (button3) {
+        grid.attach(button3, 2, 2, 1, 1);
+    }
 
     if (explanationText1) {
         const explanation = new Gtk.Label({
@@ -132,7 +191,7 @@ function addToPage(page, labelText1, widget1, labelText2, widget2, button2, expl
             halign: Gtk.Align.END,
             use_markup: true
         });
-        grid.attach(explanation, 0, 2, 3, 1);
+        grid.attach(explanation, 0, 3, 3, 1);
     }
     if (explanationText2) {
         const explanation = new Gtk.Label({
@@ -140,8 +199,10 @@ function addToPage(page, labelText1, widget1, labelText2, widget2, button2, expl
             halign: Gtk.Align.END,
             use_markup: true
         });
-        grid.attach(explanation, 0, 3, 3, 1);
+        grid.attach(explanation, 0, 4, 3, 1);
     }
+
+    return handle;
 }
 
 function createGrid(page) {
@@ -162,5 +223,5 @@ function createGrid(page) {
     });
     row.set_child(grid);
 
-    return grid;
+    return [group, grid];
 }

@@ -4,12 +4,14 @@ const Main = imports.ui.main;
 const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
 
+const MAX_NUMBER = 20;
+
 class Extension {
 
     constructor() {
         this.settingsId = null;
         this.tracker = null;
-        this.app0 = null;
+        this.apps = [];
     }
 
     enable() {
@@ -18,17 +20,21 @@ class Extension {
         this.initSettings();
         this.tracker = Shell.WindowTracker.get_default();
 
-        Main.wm.addKeybinding(
-            'shortcut-0',
-            this.settings,
-            Meta.KeyBindingFlags.NONE,
-            Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW,
-            () => { this.focusOrLaunch(this.app0); }
-        );
+        for (let i = 0; i < MAX_NUMBER; i++) {
+            Main.wm.addKeybinding(
+                `shortcut-${i}`,
+                this.settings,
+                Meta.KeyBindingFlags.NONE,
+                Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW,
+                () => { this.focusOrLaunch(this.apps[i]); }
+            );
+        }
     }
 
     disable() {
-        Main.wm.removeKeybinding('shortcut-0');
+        for (let i = 0; i < MAX_NUMBER; i++) {
+            Main.wm.removeKeybinding(`shortcut-${i}`);
+        }
         if (this.settingId) {
             this.settings.disconnect(this.settingId);
         }
@@ -38,7 +44,9 @@ class Extension {
         const existingApps = Gio.AppInfo.get_all()
             .filter(ai => ai.should_show());
 
-        this.app0 = existingApps.find(a => this.isMatchingApp(a, this.settings.get_string('app-0')));
+        for (let i = 0; i < MAX_NUMBER; i++) {
+            this.apps[i] = existingApps.find(a => this.isMatchingApp(a, this.settings.get_string(`app-${i}`)));
+        }
     }
 
     isMatchingApp(app, name) {

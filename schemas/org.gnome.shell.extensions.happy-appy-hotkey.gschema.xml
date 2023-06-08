@@ -1,11 +1,168 @@
 <schemalist>
-  <schema id="org.gnome.shell.extensions.happy-appy-hotkey" path="/org/gnome/shell/extensions/happy-appy-hotkey/">
+  <schema id="org.gnome.shell.extensions.happy-appy-hotkey"
+    path="/org/gnome/shell/extensions/happy-appy-hotkey/">
+    <key type="i" name="number">
+      <default>0</default>
+      <summary>Number of active shortcuts</summary>
+    </key>
     <key type="as" name="shortcut-0">
-      <default><![CDATA[['<Super>x']]]></default>
+      <default><![CDATA[['']]]></default>
       <summary>Shortcut 0</summary>
     </key>
     <key type="s" name="app-0">
-        <default><![CDATA['Nothing']]></default>
+      <default><![CDATA['']]></default>
+      <summary>App 0</summary>
+    </key>
+    <key type="as" name="shortcut-1">
+      <default><![CDATA[['']]]></default>
+      <summary>Shortcut 0</summary>
+    </key>
+    <key type="s" name="app-1">
+      <default><![CDATA['']]></default>
+      <summary>App 0</summary>
+    </key>
+    <key type="as" name="shortcut-2">
+      <default><![CDATA[['']]]></default>
+      <summary>Shortcut 0</summary>
+    </key>
+    <key type="s" name="app-2">
+      <default><![CDATA['']]></default>
+      <summary>App 0</summary>
+    </key>
+    <key type="as" name="shortcut-3">
+      <default><![CDATA[['']]]></default>
+      <summary>Shortcut 0</summary>
+    </key>
+    <key type="s" name="app-3">
+      <default><![CDATA['']]></default>
+      <summary>App 0</summary>
+    </key>
+    <key type="as" name="shortcut-4">
+      <default><![CDATA[['']]]></default>
+      <summary>Shortcut 0</summary>
+    </key>
+    <key type="s" name="app-4">
+      <default><![CDATA['']]></default>
+      <summary>App 0</summary>
+    </key>
+    <key type="as" name="shortcut-5">
+      <default><![CDATA[['']]]></default>
+      <summary>Shortcut 0</summary>
+    </key>
+    <key type="s" name="app-5">
+      <default><![CDATA['']]></default>
+      <summary>App 0</summary>
+    </key>
+    <key type="as" name="shortcut-6">
+      <default><![CDATA[['']]]></default>
+      <summary>Shortcut 0</summary>
+    </key>
+    <key type="s" name="app-6">
+      <default><![CDATA['']]></default>
+      <summary>App 0</summary>
+    </key>
+    <key type="as" name="shortcut-7">
+      <default><![CDATA[['']]]></default>
+      <summary>Shortcut 0</summary>
+    </key>
+    <key type="s" name="app-7">
+      <default><![CDATA['']]></default>
+      <summary>App 0</summary>
+    </key>
+    <key type="as" name="shortcut-8">
+      <default><![CDATA[['']]]></default>
+      <summary>Shortcut 0</summary>
+    </key>
+    <key type="s" name="app-8">
+      <default><![CDATA['']]></default>
+      <summary>App 0</summary>
+    </key>
+    <key type="as" name="shortcut-9">
+      <default><![CDATA[['']]]></default>
+      <summary>Shortcut 0</summary>
+    </key>
+    <key type="s" name="app-9">
+      <default><![CDATA['']]></default>
+      <summary>App 0</summary>
+    </key>
+    <key type="as" name="shortcut-10">
+      <default><![CDATA[['']]]></default>
+      <summary>Shortcut 0</summary>
+    </key>
+    <key type="s" name="app-10">
+      <default><![CDATA['']]></default>
+      <summary>App 0</summary>
+    </key>
+    <key type="as" name="shortcut-11">
+      <default><![CDATA[['']]]></default>
+      <summary>Shortcut 0</summary>
+    </key>
+    <key type="s" name="app-11">
+      <default><![CDATA['']]></default>
+      <summary>App 0</summary>
+    </key>
+    <key type="as" name="shortcut-12">
+      <default><![CDATA[['']]]></default>
+      <summary>Shortcut 0</summary>
+    </key>
+    <key type="s" name="app-12">
+      <default><![CDATA['']]></default>
+      <summary>App 0</summary>
+    </key>
+    <key type="as" name="shortcut-13">
+      <default><![CDATA[['']]]></default>
+      <summary>Shortcut 0</summary>
+    </key>
+    <key type="s" name="app-13">
+      <default><![CDATA['']]></default>
+      <summary>App 0</summary>
+    </key>
+    <key type="as" name="shortcut-14">
+      <default><![CDATA[['']]]></default>
+      <summary>Shortcut 0</summary>
+    </key>
+    <key type="s" name="app-14">
+      <default><![CDATA['']]></default>
+      <summary>App 0</summary>
+    </key>
+    <key type="as" name="shortcut-15">
+      <default><![CDATA[['']]]></default>
+      <summary>Shortcut 0</summary>
+    </key>
+    <key type="s" name="app-15">
+      <default><![CDATA['']]></default>
+      <summary>App 0</summary>
+    </key>
+    <key type="as" name="shortcut-16">
+      <default><![CDATA[['']]]></default>
+      <summary>Shortcut 0</summary>
+    </key>
+    <key type="s" name="app-16">
+      <default><![CDATA['']]></default>
+      <summary>App 0</summary>
+    </key>
+    <key type="as" name="shortcut-17">
+      <default><![CDATA[['']]]></default>
+      <summary>Shortcut 0</summary>
+    </key>
+    <key type="s" name="app-17">
+      <default><![CDATA['']]></default>
+      <summary>App 0</summary>
+    </key>
+    <key type="as" name="shortcut-18">
+      <default><![CDATA[['']]]></default>
+      <summary>Shortcut 0</summary>
+    </key>
+    <key type="s" name="app-18">
+      <default><![CDATA['']]></default>
+      <summary>App 0</summary>
+    </key>
+    <key type="as" name="shortcut-19">
+      <default><![CDATA[['']]]></default>
+      <summary>Shortcut 0</summary>
+    </key>
+    <key type="s" name="app-19">
+      <default><![CDATA['']]></default>
       <summary>App 0</summary>
     </key>
   </schema>
