@@ -58,14 +58,14 @@ class Extension {
             return;
         }
 
-        global.get_window_actors().forEach(wa => {
+        for (const wa of global.get_window_actors()) {
             const win = wa.get_meta_window();
             const winApp = this.tracker.get_window_app(win);
             if (winApp.get_id() === definedApp.get_id()) {
                 win.activate(global.get_current_time());
                 return;
             }
-        });
+        }
         definedApp.launch([], null);
     }
 }
