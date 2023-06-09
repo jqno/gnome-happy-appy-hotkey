@@ -45,9 +45,12 @@ function makeShortcut(i, page, settings) {
         settings.set_strv(shortcutKey, [shortcut.text]);
     });
     settings.connect(`changed::${shortcutKey}`, () => {
-        const cursor = shortcut.get_position();
-        shortcut.text = settings.get_strv(shortcutKey)[0];
-        shortcut.set_position(cursor);
+        const newValue = settings.get_strv(shortcutKey[0]);
+        if (shortcut.text !== newValue) {
+            const cursor = shortcut.get_position();
+            shortcut.text = newValue;
+            shortcut.set_position(cursor);
+        }
     });
 
     const app = new Gtk.Entry({
