@@ -16,7 +16,7 @@ function fillPreferencesWindow(win) {
 
     const n = settings.get_int('number');
     for (let i = 0; i < n; i++) {
-        makeShortcut(i, page, settings);
+        makeShortcut(i, page, settings, win);
     }
 }
 
@@ -33,7 +33,7 @@ function makeAddButton(page, settings) {
     group.add(btn);
 }
 
-function makeShortcut(i, page, settings) {
+function makeShortcut(i, page, settings, parentWin) {
     const shortcutKey = `shortcut-${i}`;
     const appKey = `app-${i}`;
 
@@ -60,7 +60,7 @@ function makeShortcut(i, page, settings) {
         label: 'App'
     });
     appBtn.connect('clicked', () => {
-        createAppChooserDialog(app);
+        createAppChooserDialog(app, parentWin);
     })
 
     const delBtn = new Gtk.Button({
@@ -102,13 +102,14 @@ function deleteHotkey(index, page, settings) {
     settings.set_int('number', n);
 }
 
-function createAppChooserDialog(textbox) {
+function createAppChooserDialog(textbox, parentWin) {
     const dialog = new Gtk.Dialog({
         title: 'Choose an application',
         use_header_bar: 1,
         modal: true,
         resizable: false
     });
+    dialog.set_transient_for(parentWin);
     dialog.set_size_request(300, 700);
     dialog.add_button('Cancel', Gtk.ResponseType.CANCEL);
     dialog.add_button('Confirm', Gtk.ResponseType.OK);
