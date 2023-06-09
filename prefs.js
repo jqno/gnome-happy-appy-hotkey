@@ -45,7 +45,7 @@ function makeShortcut(i, page, settings) {
         settings.set_strv(shortcutKey, [shortcut.text]);
     });
     settings.connect(`changed::${shortcutKey}`, () => {
-        const newValue = settings.get_strv(shortcutKey[0]);
+        const newValue = settings.get_strv(shortcutKey)[0];
         if (shortcut.text !== newValue) {
             const cursor = shortcut.get_position();
             shortcut.text = newValue;
