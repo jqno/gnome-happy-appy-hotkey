@@ -87,7 +87,7 @@ function addHotkey(page, settings) {
 }
 
 function deleteHotkey(index, page, settings) {
-    let n = settings.get_int('number') - 1;
+    const n = settings.get_int('number') - 1;
 
     for (let i = index; i < n; i++) {
         settings.set_strv(`shortcut-${i}`, settings.get_strv(`shortcut-${i + 1}`));
@@ -173,11 +173,11 @@ function updateApp(textbox, appName) {
 function addToPage(page, labelText1, widget1, labelText2, widget2, button2, button3, explanationText1, explanationText2) {
     const [handle, grid] = createGrid(page);
 
-    const label1 = new Gtk.Label({ label: labelText1 + ':' });
+    const label1 = new Gtk.Label({ label: `${labelText1}:` });
     grid.attach(label1, 0, 0, 1, 1);
     grid.attach(widget1, 1, 0, 2, 1);
 
-    const label2 = new Gtk.Label({ label: labelText2 + ':' });
+    const label2 = new Gtk.Label({ label: `${labelText2}:` });
     grid.attach(label2, 0, 1, 1, 1);
     grid.attach(widget2, 1, 1, 1, 1);
     if (button2) {
@@ -190,7 +190,7 @@ function addToPage(page, labelText1, widget1, labelText2, widget2, button2, butt
 
     if (explanationText1) {
         const explanation = new Gtk.Label({
-            label: '<small>' + explanationText1 + '</small>',
+            label: `<small>${explanationText1}</small>`,
             halign: Gtk.Align.END,
             use_markup: true
         });
@@ -198,7 +198,7 @@ function addToPage(page, labelText1, widget1, labelText2, widget2, button2, butt
     }
     if (explanationText2) {
         const explanation = new Gtk.Label({
-            label: '<small>' + explanationText2 + '</small>',
+            label: `<small>${explanationText2}</small>`,
             halign: Gtk.Align.END,
             use_markup: true
         });
