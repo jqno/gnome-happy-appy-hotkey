@@ -22,7 +22,7 @@ class Extension {
 
         for (let i = 0; i < MAX_NUMBER; i++) {
             Main.wm.addKeybinding(
-                `shortcut-${i}`,
+                `hotkey-${i}`,
                 this.settings,
                 Meta.KeyBindingFlags.NONE,
                 Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW,
@@ -33,7 +33,7 @@ class Extension {
 
     disable() {
         for (let i = 0; i < MAX_NUMBER; i++) {
-            Main.wm.removeKeybinding(`shortcut-${i}`);
+            Main.wm.removeKeybinding(`hotkey-${i}`);
         }
         if (this.settingId) {
             this.settings.disconnect(this.settingId);

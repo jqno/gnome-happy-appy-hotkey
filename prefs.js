@@ -16,7 +16,7 @@ function fillPreferencesWindow(win) {
 
     const n = settings.get_int('number');
     for (let i = 0; i < n; i++) {
-        makeShortcut(i, page, settings, win);
+        makeHotkey(i, page, settings, win);
     }
 }
 
@@ -33,23 +33,23 @@ function makeAddButton(page, settings) {
     group.add(btn);
 }
 
-function makeShortcut(i, page, settings, parentWin) {
-    const shortcutKey = `shortcut-${i}`;
+function makeHotkey(i, page, settings, parentWin) {
+    const hotkeyKey = `hotkey-${i}`;
     const appKey = `app-${i}`;
 
-    const shortcut = new Gtk.Entry({
-        text: settings.get_strv(shortcutKey)[0],
+    const hotkey = new Gtk.Entry({
+        text: settings.get_strv(hotkeyKey)[0],
         hexpand: true
     });
-    shortcut.connect('changed', () => {
-        settings.set_strv(shortcutKey, [shortcut.text]);
+    hotkey.connect('changed', () => {
+        settings.set_strv(hotkeyKey, [hotkey.text]);
     });
-    settings.connect(`changed::${shortcutKey}`, () => {
-        const newValue = settings.get_strv(shortcutKey)[0];
-        if (shortcut.text !== newValue) {
-            const cursor = shortcut.get_position();
-            shortcut.text = newValue;
-            shortcut.set_position(cursor);
+    settings.connect(`changed::${hotkeyKey}`, () => {
+        const newValue = settings.get_strv(hotkeyKey)[0];
+        if (hotkey.text !== newValue) {
+            const cursor = hotkey.get_position();
+            hotkey.text = newValue;
+            hotkey.set_position(cursor);
         }
     });
 
@@ -71,7 +71,7 @@ function makeShortcut(i, page, settings, parentWin) {
     })
 
     settings.bind(appKey, app, 'text', Gio.SettingsBindFlags.DEFAULT);
-    const handle = addToPage(page, 'Shortcut', shortcut, 'App', app, appBtn, delBtn, null, null);
+    const handle = addToPage(page, 'Hotkey', hotkey, 'App', app, appBtn, delBtn, null, null);
 
     hotkeyHandles.push(handle);
 }
@@ -80,7 +80,7 @@ function addHotkey(page, settings) {
     const n = settings.get_int('number');
 
     if (n < MAX_NUMBER) {
-        makeShortcut(n, page, settings);
+        makeHotkey(n, page, settings);
 
         settings.set_int('number', n + 1);
     }
@@ -90,10 +90,10 @@ function deleteHotkey(index, page, settings) {
     const n = settings.get_int('number') - 1;
 
     for (let i = index; i < n; i++) {
-        settings.set_strv(`shortcut-${i}`, settings.get_strv(`shortcut-${i + 1}`));
+        settings.set_strv(`hotkey-${i}`, settings.get_strv(`hotkey-${i + 1}`));
         settings.set_string(`app-${i}`, settings.get_string(`app-${i + 1}`));
     }
-    settings.reset(`shortcut-${n}`);
+    settings.reset(`hotkey-${n}`);
     settings.reset(`app-${n}`);
 
     page.remove(hotkeyHandles[n]);
