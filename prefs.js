@@ -9,14 +9,31 @@ function init() { }
 function fillPreferencesWindow(win) {
     const settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.happy-appy-hotkey');
 
+    addAppHotkeyPage(win, settings);
+    addMiscHotkeyPage(win, settings);
+}
+
+function addMiscHotkeyPage(win, settings) {
     const page = new Adw.PreferencesPage();
+    page.set_title('Misc');
+    page.set_icon_name('dialog-information-symbolic');
+    win.add(page);
+
+    const unboundCycle = makeHotkey('unbound-cycle', settings);
+    addToPage(page, 'Unbound cycle', unboundCycle, null, null, null, null, null, 'Cycle through apps that aren\'t bound to a hotkey in the other tab', null);
+}
+
+function addAppHotkeyPage(win, settings) {
+    const page = new Adw.PreferencesPage();
+    page.set_title('Apps');
+    page.set_icon_name('emblem-favorite-symbolic');
     win.add(page);
 
     makeAddButton(page, settings, win);
 
     const n = settings.get_int('number');
     for (let i = 0; i < n; i++) {
-        makeHotkey(i, page, settings, win);
+        makeAppHotkey(i, page, settings, win);
     }
 }
 
@@ -33,9 +50,16 @@ function makeAddButton(page, settings, parentWin) {
     group.add(btn);
 }
 
-function makeHotkey(i, page, settings, parentWin) {
+function makeAppHotkey(i, page, settings, parentWin) {
+    const hotkey = makeHotkey(i, settings);
+    const [app, appBtn, delBtn] = makeApp(i, page, settings, parentWin);
+
+    const handle = addToPage(page, 'Hotkey', hotkey, 'App', app, appBtn, delBtn, null, null);
+    hotkeyHandles.push(handle);
+}
+
+function makeHotkey(i, settings) {
     const hotkeyKey = `hotkey-${i}`;
-    const appKey = `app-${i}`;
 
     const hotkey = new Gtk.Entry({
         text: settings.get_strv(hotkeyKey)[0],
@@ -52,6 +76,12 @@ function makeHotkey(i, page, settings, parentWin) {
             hotkey.set_position(cursor);
         }
     });
+
+    return hotkey;
+}
+
+function makeApp(i, page, settings, parentWin) {
+    const appKey = `app-${i}`;
 
     const app = new Gtk.Entry({
         hexpand: true
@@ -71,16 +101,15 @@ function makeHotkey(i, page, settings, parentWin) {
     })
 
     settings.bind(appKey, app, 'text', Gio.SettingsBindFlags.DEFAULT);
-    const handle = addToPage(page, 'Hotkey', hotkey, 'App', app, appBtn, delBtn, null, null);
 
-    hotkeyHandles.push(handle);
+    return [app, appBtn, delBtn];
 }
 
 function addHotkey(page, settings, parentWin) {
     const n = settings.get_int('number');
 
     if (n < MAX_NUMBER) {
-        makeHotkey(n, page, settings, parentWin);
+        makeAppHotkey(n, page, settings, parentWin);
 
         settings.set_int('number', n + 1);
     }
@@ -178,10 +207,10 @@ function addToPage(page, labelText1, widget1, labelText2, widget2, button2, butt
     grid.attach(label1, 0, 0, 1, 1);
     grid.attach(widget1, 1, 0, 2, 1);
 
-    const label2 = new Gtk.Label({ label: `${labelText2}:` });
-    grid.attach(label2, 0, 1, 1, 1);
-    grid.attach(widget2, 1, 1, 1, 1);
     if (button2) {
+        const label2 = new Gtk.Label({ label: `${labelText2}:` });
+        grid.attach(label2, 0, 1, 1, 1);
+        grid.attach(widget2, 1, 1, 1, 1);
         grid.attach(button2, 2, 1, 1, 1);
     }
 

@@ -5,6 +5,10 @@
             <default>0</default>
             <summary>Number of active hotkeys</summary>
         </key>
+        <key type="as" name="hotkey-unbound-cycle">
+            <default><![CDATA[['']]]></default>
+            <summary>Hotkey to cycle through apps that aren't boun to a hotkey in the other tab</summary>
+        </key>
         <key type="as" name="hotkey-0">
             <default><![CDATA[['']]]></default>
             <summary>Hotkey 0</summary>

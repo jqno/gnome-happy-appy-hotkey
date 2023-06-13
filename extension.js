@@ -16,19 +16,14 @@ class Extension {
 
     enable() {
         this.settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.happy-appy-hotkey');
-        this.settingId = this.settings.connect('changed', () => { this.initSettings(); });
+        this.settingId = this.settings.connect('changed', () => this.initSettings());
         this.initSettings();
         this.tracker = Shell.WindowTracker.get_default();
 
         for (let i = 0; i < MAX_NUMBER; i++) {
-            Main.wm.addKeybinding(
-                `hotkey-${i}`,
-                this.settings,
-                Meta.KeyBindingFlags.NONE,
-                Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW,
-                () => { this.focusOrLaunch(this.apps[i]); }
-            );
+            this.addKeyBinding(i, () => this.focusOrLaunch(this.apps[i]));
         }
+        this.addKeyBinding('unbound-cycle', () => this.unboundCycle());
     }
 
     disable() {
@@ -49,6 +44,16 @@ class Extension {
         }
     }
 
+    addKeyBinding(hotkey, callback) {
+        Main.wm.addKeybinding(
+            `hotkey-${hotkey}`,
+            this.settings,
+            Meta.KeyBindingFlags.NONE,
+            Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW,
+            callback
+        );
+    }
+
     isMatchingApp(app, name) {
         return app && app.get_name() && name && app.get_name().toLowerCase() === name.toLowerCase();
     }
@@ -58,15 +63,63 @@ class Extension {
             return;
         }
 
-        for (const wa of global.get_window_actors()) {
-            const win = wa.get_meta_window();
-            const winApp = this.tracker.get_window_app(win);
-            if (winApp.get_id() === definedApp.get_id()) {
-                win.activate(global.get_current_time());
-                return;
+        const wins = global.get_window_actors();
+        for (let i = 0; i <= wins.length; i++) {
+            const win = wins[i] && wins[i].get_meta_window();
+            if (win) {
+                const winApp = this.tracker.get_window_app(win);
+                if (winApp.get_id() === definedApp.get_id()) {
+                    win.activate(global.get_current_time());
+                    return;
+                }
             }
         }
         definedApp.launch([], null);
+    }
+
+    unboundCycle() {
+        const activeWin = this.getActiveWindow();
+        const wins = global.get_window_actors();
+        let position = -1;
+
+        if (activeWin) {
+            for (let i = 0; i <= wins.length; i++) {
+                const win = wins[i] && wins[i].get_meta_window();
+                if (win === activeWin) {
+                    position = i;
+                }
+            }
+        }
+
+        for (let i = 0; i < wins.length; i++) {
+            const x = (i + position + 1) % wins.length;
+            const win = wins[x].get_meta_window();
+            const winApp = this.tracker.get_window_app(win);
+
+            if (!this.appIsBound(winApp)) {
+                win.activate(global.get_current_time());
+                break;
+            }
+        }
+    }
+
+    getActiveWindow() {
+        const win = global.display.focus_window;
+
+        if (win && win.get_window_type() !== Meta.WindowType.DESKTOP) {
+            return win;
+        }
+
+        return null;
+    }
+
+    appIsBound(app) {
+        for (const a of this.apps) {
+            if (a && app.get_id() === a.get_id()) {
+                return true;
+            }
+        }
+        return false;
     }
 }
 
