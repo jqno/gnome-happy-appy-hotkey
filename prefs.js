@@ -12,7 +12,7 @@ function fillPreferencesWindow(win) {
     const page = new Adw.PreferencesPage();
     win.add(page);
 
-    makeAddButton(page, settings);
+    makeAddButton(page, settings, win);
 
     const n = settings.get_int('number');
     for (let i = 0; i < n; i++) {
@@ -20,12 +20,12 @@ function fillPreferencesWindow(win) {
     }
 }
 
-function makeAddButton(page, settings) {
+function makeAddButton(page, settings, parentWin) {
     const btn = new Gtk.Button({
         label: 'Add new hotkey'
     });
     btn.connect('clicked', () => {
-        addHotkey(page, settings);
+        addHotkey(page, settings, parentWin);
     });
 
     const group = new Adw.PreferencesGroup();
@@ -76,11 +76,11 @@ function makeHotkey(i, page, settings, parentWin) {
     hotkeyHandles.push(handle);
 }
 
-function addHotkey(page, settings) {
+function addHotkey(page, settings, parentWin) {
     const n = settings.get_int('number');
 
     if (n < MAX_NUMBER) {
-        makeHotkey(n, page, settings);
+        makeHotkey(n, page, settings, parentWin);
 
         settings.set_int('number', n + 1);
     }
