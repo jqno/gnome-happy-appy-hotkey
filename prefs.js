@@ -1,4 +1,4 @@
-const { Adw, Gio, Gtk, GObject } = imports.gi;
+const { Adw, Gio, Gdk, Gtk, GObject } = imports.gi;
 const ExtensionUtils = imports.misc.extensionUtils;
 
 const MAX_NUMBER = 20;
@@ -19,7 +19,7 @@ function addMiscHotkeyPage(win, settings) {
     page.set_icon_name('dialog-information-symbolic');
     win.add(page);
 
-    const unboundCycle = makeHotkey('unbound-cycle', settings);
+    const unboundCycle = makeHotkeyButton('unbound-cycle', settings, win);
     addToPage(page, 'Unbound cycle', unboundCycle, null, null, null, null, null, 'Cycle through apps that aren\'t bound to a hotkey in the other tab', null);
 }
 
@@ -51,58 +51,62 @@ function makeAddButton(page, settings, parentWin) {
 }
 
 function makeAppHotkey(i, page, settings, parentWin) {
-    const hotkey = makeHotkey(i, settings);
-    const [app, appBtn, delBtn] = makeApp(i, page, settings, parentWin);
+    const hotkeyBtn = makeHotkeyButton(i, settings, parentWin);
+    const [app, appBtn] = makeApp(i, settings, parentWin);
 
-    const handle = addToPage(page, 'Hotkey', hotkey, 'App', app, appBtn, delBtn, null, null);
+    const delBtn = new Gtk.Button({
+        label: 'Remove hotkey'
+    });
+    delBtn.connect('clicked', () => {
+        deleteHotkey(i, page, settings);
+    })
+
+    const handle = addToPage(page, 'Hotkey', hotkeyBtn, delBtn, 'App', app, appBtn, null, null);
     hotkeyHandles.push(handle);
 }
 
-function makeHotkey(i, settings) {
+function makeHotkeyButton(i, settings, parentWin) {
     const hotkeyKey = `hotkey-${i}`;
+    const btn = new Gtk.Button();
+    btn.connect('clicked', () => {
+        createShortcutDialog(hotkeyKey, settings, parentWin);
+    })
 
-    const hotkey = new Gtk.Entry({
-        text: settings.get_strv(hotkeyKey)[0],
-        hexpand: true
-    });
-    hotkey.connect('changed', () => {
-        settings.set_strv(hotkeyKey, [hotkey.text]);
-    });
     settings.connect(`changed::${hotkeyKey}`, () => {
-        const newValue = settings.get_strv(hotkeyKey)[0];
-        if (hotkey.text !== newValue) {
-            const cursor = hotkey.get_position();
-            hotkey.text = newValue;
-            hotkey.set_position(cursor);
-        }
+        updateHotkeyButton(btn, hotkeyKey, settings);
     });
 
-    return hotkey;
+    updateHotkeyButton(btn, hotkeyKey, settings);
+
+    return btn;
 }
 
-function makeApp(i, page, settings, parentWin) {
+function updateHotkeyButton(btn, hotkeyKey, settings) {
+    const text = settings.get_strv(hotkeyKey)[0];
+    if (text) {
+        btn.set_label(text);
+    }
+    else {
+        btn.set_label('Click to assign hotkey');
+    }
+}
+
+function makeApp(i, settings, parentWin) {
     const appKey = `app-${i}`;
 
     const app = new Gtk.Entry({
         hexpand: true
     });
     const appBtn = new Gtk.Button({
-        label: 'App'
+        label: 'Pick app'
     });
     appBtn.connect('clicked', () => {
         createAppChooserDialog(app, parentWin);
     })
 
-    const delBtn = new Gtk.Button({
-        label: 'Remove'
-    });
-    delBtn.connect('clicked', () => {
-        deleteHotkey(i, page, settings);
-    })
-
     settings.bind(appKey, app, 'text', Gio.SettingsBindFlags.DEFAULT);
 
-    return [app, appBtn, delBtn];
+    return [app, appBtn];
 }
 
 function addHotkey(page, settings, parentWin) {
@@ -131,10 +135,94 @@ function deleteHotkey(index, page, settings) {
     settings.set_int('number', n);
 }
 
+function createShortcutDialog(hotkeyKey, settings, parentWin) {
+    const dialog = new Gtk.Dialog({
+        title: 'Set hotkey',
+        use_header_bar: 1,
+        modal: true,
+        resizable: false
+    });
+    dialog.set_transient_for(parentWin);
+    dialog.set_size_request(440, 200);
+
+    const box = new Gtk.Box({
+        orientation: Gtk.Orientation.VERTICAL,
+        spacing: 2,
+        marginStart: 16,
+        marginEnd: 16,
+        marginTop: 16,
+        marginBottom: 16
+    });
+    dialog.get_content_area().append(box);
+
+    const label = new Gtk.Label({
+        vexpand: true,
+        label: 'Press keyboard shortcut, or Escape to cancel, or BackSpace to clear the hotkey.'
+    });
+    box.append(label);
+
+    const eventController = new Gtk.EventControllerKey();
+    dialog.add_controller(eventController);
+
+    eventController.connect('key-pressed', (_widget, keyval, keycode, state) => {
+        let mask = state & Gtk.accelerator_get_default_mod_mask();
+        mask &= ~Gdk.ModifierType.LOCK_MASK;
+
+        if (mask === 0 && keyval === Gdk.KEY_Escape) {
+            dialog.visible = false;
+            return Gdk.EVENT_STOP;
+        }
+
+        if (keyval === Gdk.KEY_BackSpace) {
+            settings.set_strv(hotkeyKey, []);
+            dialog.close();
+            return Gdk.EVENT_STOP;
+        }
+
+        if (isBindingValid({ mask, keycode, keyval })) {
+            const binding = Gtk.accelerator_name_with_keycode(
+                null,
+                keyval,
+                keycode,
+                mask
+            );
+            settings.set_strv(hotkeyKey, [binding]);
+            dialog.close();
+        }
+        return Gdk.EVENT_STOP;
+
+    })
+
+    dialog.show();
+}
+
+function isBindingValid({ mask, keycode, keyval }) {
+    if ((mask === 0 || mask === Gdk.SHIFT_MASK) && keycode !== 0) {
+        if (
+            (keyval >= Gdk.KEY_a && keyval <= Gdk.KEY_z)
+            || (keyval >= Gdk.KEY_A && keyval <= Gdk.KEY_Z)
+            || (keyval >= Gdk.KEY_0 && keyval <= Gdk.KEY_9)
+            || (keyval >= Gdk.KEY_kana_fullstop && keyval <= Gdk.KEY_semivoicedsound)
+            || (keyval >= Gdk.KEY_Arabic_comma && keyval <= Gdk.KEY_Arabic_sukun)
+            || (keyval >= Gdk.KEY_Serbian_dje && keyval <= Gdk.KEY_Cyrillic_HARDSIGN)
+            || (keyval >= Gdk.KEY_Greek_ALPHAaccent && keyval <= Gdk.KEY_Greek_omega)
+            || (keyval >= Gdk.KEY_hebrew_doublelowline && keyval <= Gdk.KEY_hebrew_taf)
+            || (keyval >= Gdk.KEY_Thai_kokai && keyval <= Gdk.KEY_Thai_lekkao)
+            || (keyval >= Gdk.KEY_Hangul_Kiyeog && keyval <= Gdk.KEY_Hangul_J_YeorinHieuh)
+            || (keyval === Gdk.KEY_space && mask === 0)
+        ) {
+            return false;
+        }
+    }
+
+    return Gtk.accelerator_valid(keyval, mask)
+        || (keyval === Gdk.KEY_Tab && mask !== 0);
+}
+
 function createAppChooserDialog(textbox, parentWin) {
     const dialog = new Gtk.Dialog({
         title: 'Choose an application',
-        use_header_bar: 1,
+        use_header_bar: true,
         modal: true,
         resizable: false
     });
@@ -143,6 +231,16 @@ function createAppChooserDialog(textbox, parentWin) {
     dialog.add_button('Cancel', Gtk.ResponseType.CANCEL);
     dialog.add_button('Confirm', Gtk.ResponseType.OK);
     dialog.set_default_response(Gtk.ResponseType.OK);
+
+    const box = new Gtk.Box({
+        orientation: Gtk.Orientation.VERTICAL,
+        spacing: 10
+    });
+    dialog.get_content_area().append(box);
+
+    const scrolledWindow = new Gtk.ScrolledWindow({ vexpand: true });
+    scrolledWindow.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
+    box.append(scrolledWindow);
 
     const listStore = new Gtk.ListStore();
     listStore.set_column_types([GObject.TYPE_STRING]);
@@ -162,19 +260,10 @@ function createAppChooserDialog(textbox, parentWin) {
     treeView.connect('row-activated', () => {
         dialog.response(Gtk.ResponseType.OK);
     });
+    scrolledWindow.set_child(treeView);
 
     const selection = treeView.get_selection();
     selection.set_mode(Gtk.SelectionMode.SINGLE);
-
-    const scrolledWindow = new Gtk.ScrolledWindow({ vexpand: true });
-    scrolledWindow.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
-    scrolledWindow.set_child(treeView);
-
-    const box = new Gtk.Box({
-        orientation: Gtk.Orientation.VERTICAL,
-        spacing: 10
-    });
-    box.append(scrolledWindow);
 
     dialog.connect('response', (dialog, responseId) => {
         if (responseId === Gtk.ResponseType.OK) {
@@ -186,7 +275,6 @@ function createAppChooserDialog(textbox, parentWin) {
         }
         dialog.destroy();
     });
-    dialog.get_content_area().append(box);
     dialog.show();
 }
 
@@ -200,12 +288,16 @@ function updateApp(textbox, appName) {
     textbox.set_text(appName);
 }
 
-function addToPage(page, labelText1, widget1, labelText2, widget2, button2, button3, explanationText1, explanationText2) {
+function addToPage(page, labelText1, widget1, button1, labelText2, widget2, button2, explanationText1, explanationText2) {
     const [handle, grid] = createGrid(page);
 
     const label1 = new Gtk.Label({ label: `${labelText1}:` });
     grid.attach(label1, 0, 0, 1, 1);
-    grid.attach(widget1, 1, 0, 2, 1);
+    grid.attach(widget1, 1, 0, 1, 1);
+
+    if (button1) {
+        grid.attach(button1, 2, 0, 1, 1);
+    }
 
     if (button2) {
         const label2 = new Gtk.Label({ label: `${labelText2}:` });
@@ -214,17 +306,13 @@ function addToPage(page, labelText1, widget1, labelText2, widget2, button2, butt
         grid.attach(button2, 2, 1, 1, 1);
     }
 
-    if (button3) {
-        grid.attach(button3, 2, 2, 1, 1);
-    }
-
     if (explanationText1) {
         const explanation = new Gtk.Label({
             label: `<small>${explanationText1}</small>`,
             halign: Gtk.Align.END,
             use_markup: true
         });
-        grid.attach(explanation, 0, 3, 3, 1);
+        grid.attach(explanation, 0, 2, 3, 1);
     }
     if (explanationText2) {
         const explanation = new Gtk.Label({
@@ -232,7 +320,7 @@ function addToPage(page, labelText1, widget1, labelText2, widget2, button2, butt
             halign: Gtk.Align.END,
             use_markup: true
         });
-        grid.attach(explanation, 0, 4, 3, 1);
+        grid.attach(explanation, 0, 3, 3, 1);
     }
 
     return handle;
