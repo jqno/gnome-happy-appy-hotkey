@@ -69,7 +69,7 @@ class Extension {
             if (win) {
                 const winApp = this.tracker.get_window_app(win);
                 if (winApp.get_id() === definedApp.get_id()) {
-                    win.activate(global.get_current_time());
+                    this.activate(win);
                     return;
                 }
             }
@@ -94,11 +94,12 @@ class Extension {
         for (let i = 0; i < wins.length; i++) {
             const x = (i + position + 1) % wins.length;
             const win = wins[x].get_meta_window();
-            const winApp = this.tracker.get_window_app(win);
-
-            if (!this.appIsBound(winApp)) {
-                win.activate(global.get_current_time());
-                break;
+            if (win) {
+                const winApp = this.tracker.get_window_app(win);
+                if (!this.appIsBound(winApp)) {
+                    this.activate(win);
+                    break;
+                }
             }
         }
     }
@@ -120,6 +121,12 @@ class Extension {
             }
         }
         return false;
+    }
+
+    activate(win) {
+        const now = global.get_current_time();
+        win.activate(now);
+        win.focus(now);
     }
 }
 
