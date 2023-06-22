@@ -291,7 +291,10 @@ function updateApp(textbox, appName) {
 function addToPage(page, labelText1, widget1, button1, labelText2, widget2, button2, explanationText1, explanationText2) {
     const [handle, grid] = createGrid(page);
 
-    const label1 = new Gtk.Label({ label: `${labelText1}:` });
+    const label1 = new Gtk.Label({
+        halign: Gtk.Align.START,
+        label: `${labelText1}:`
+    });
     grid.attach(label1, 0, 0, 1, 1);
     grid.attach(widget1, 1, 0, 1, 1);
 
@@ -300,7 +303,10 @@ function addToPage(page, labelText1, widget1, button1, labelText2, widget2, butt
     }
 
     if (button2) {
-        const label2 = new Gtk.Label({ label: `${labelText2}:` });
+        const label2 = new Gtk.Label({
+            halign: Gtk.Align.START,
+            label: `${labelText2}:`
+        });
         grid.attach(label2, 0, 1, 1, 1);
         grid.attach(widget2, 1, 1, 1, 1);
         grid.attach(button2, 2, 1, 1, 1);
