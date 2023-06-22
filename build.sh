@@ -5,7 +5,7 @@ case "$1" in
     "local")
         glib-compile-schemas schemas
         gnome-extensions pack --force --extra-source="LICENSE.md"
-        gnome-extensions install --force gnome-happy-appy-hotkey@jqno.nl.shell-extension.zip
+        gnome-extensions install --force happy-appy-hotkey@jqno.nl.shell-extension.zip
         echo "Press Alt+F2 and type 'restart'!"
         ;;
 

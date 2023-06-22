@@ -27,8 +27,9 @@ class Extension {
     }
 
     disable() {
+        this.removeKeyBinding('unbound-cycle');
         for (let i = 0; i < MAX_NUMBER; i++) {
-            Main.wm.removeKeybinding(`hotkey-${i}`);
+            this.removeKeyBinding(i);
         }
         if (this.settingId) {
             this.settings.disconnect(this.settingId);
@@ -52,6 +53,10 @@ class Extension {
             Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW,
             callback
         );
+    }
+
+    removeKeyBinding(hotkey) {
+        Main.wm.removeKeybinding(`hotkey-${hotkey}`);
     }
 
     isMatchingApp(app, name) {
