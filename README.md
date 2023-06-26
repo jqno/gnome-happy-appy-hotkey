@@ -4,6 +4,8 @@ A GNOME Shell extension that assigns hotkeys to apps to give them focus or launc
 
 ![A screenshot of Happy Appy Hotkey's preferences screen](screenshot.png)
 
+Get it on [extensions.gnome.org](https://extensions.gnome.org/extension/6057/happy-appy-hotkey/)!
+
 # Features
 
 - Assign a hotkey to an app to
