@@ -29,7 +29,9 @@ export default class HappyAppyHotkeyExtension extends Extension {
         if (this.settingId) {
             this.settings.disconnect(this.settingId);
         }
+        this.tracker = null;
         this.settings = null;
+        this.apps = null;
     }
 
     initSettings() {
