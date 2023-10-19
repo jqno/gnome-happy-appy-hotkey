@@ -1,21 +1,16 @@
-const ExtensionUtils = imports.misc.extensionUtils;
-const Gio = imports.gi.Gio;
-const Main = imports.ui.main;
-const Meta = imports.gi.Meta;
-const Shell = imports.gi.Shell;
+import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
+import Gio from 'gi://Gio';
+import Meta from 'gi://Meta';
+import Shell from 'gi://Shell';
+import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 
 const MAX_NUMBER = 20;
 
-class Extension {
-
-    constructor() {
-        this.settingsId = null;
-        this.tracker = null;
-        this.apps = [];
-    }
+export default class HappyAppyHotkeyExtension extends Extension {
 
     enable() {
-        this.settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.happy-appy-hotkey');
+        this.apps = [];
+        this.settings = this.getSettings('org.gnome.shell.extensions.happy-appy-hotkey');
         this.settingId = this.settings.connect('changed', () => this.initSettings());
         this.initSettings();
         this.tracker = Shell.WindowTracker.get_default();
@@ -134,8 +129,4 @@ class Extension {
         win.activate(now);
         win.focus(now);
     }
-}
-
-function init() {
-    return new Extension();
 }
