@@ -220,7 +220,9 @@ export default class HappyAppyHotkeyPreferences extends ExtensionPreferences {
         }
 
         return Gtk.accelerator_valid(keyval, mask)
-            || (keyval === Gdk.KEY_Tab && mask !== 0);
+            || (keyval === Gdk.KEY_Tab && mask !== 0)
+            || (keyval === Gdk.KEY_Scroll_Lock)
+            || (keyval === Gdk.KEY_Break);
     }
 
     createAppChooserDialog(textbox, parentWin) {
