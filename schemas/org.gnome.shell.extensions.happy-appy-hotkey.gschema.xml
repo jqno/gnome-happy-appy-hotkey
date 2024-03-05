@@ -5,6 +5,10 @@
             <default>0</default>
             <summary>Number of active hotkeys</summary>
         </key>
+        <key type="b" name="restrict-to-current-workspace">
+            <default>false</default>
+            <summary>Restrict to current workspace</summary>
+        </key>
         <key type="as" name="hotkey-unbound-cycle">
             <default><![CDATA[['']]]></default>
             <summary>Hotkey to cycle through apps that aren't boun to a hotkey in the other tab</summary>

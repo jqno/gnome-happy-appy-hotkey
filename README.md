@@ -12,6 +12,7 @@ Get it on [extensions.gnome.org](https://extensions.gnome.org/extension/6057/hap
   - Give it focus if it's already running, or
   - Launch it if it's not.
 - Assign a hotkey to cycle through all the apps that don't have a hotkey
+- Optionally restrict hotkeys to current workspace
 - Supports Wayland
 
 # Motivation

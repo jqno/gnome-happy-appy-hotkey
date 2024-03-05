@@ -14,15 +14,27 @@ export default class HappyAppyHotkeyPreferences extends ExtensionPreferences {
         const settings = this.getSettings('org.gnome.shell.extensions.happy-appy-hotkey');
 
         this.addAppHotkeyPage(win, settings);
-        this.addMiscHotkeyPage(win, settings);
+        this.addMiscSettingPage(win, settings);
     }
 
-    addMiscHotkeyPage(win, settings) {
+    addMiscSettingPage(win, settings) {
         const page = new Adw.PreferencesPage();
         page.set_title('Misc');
         page.set_icon_name('dialog-information-symbolic');
         win.add(page);
 
+        // Restrict to current workspace
+        const [_, grid] = this.createGrid(page);
+        const label1 = new Gtk.Label({
+            halign: Gtk.Align.START,
+            label: 'Restrict to current workspace'
+        });
+        const checkbox = new Gtk.CheckButton();
+        settings.bind('restrict-to-current-workspace', checkbox, 'active', Gio.SettingsBindFlags.DEFAULT);
+        grid.attach(label1, 0, 0, 1, 1);
+        grid.attach(checkbox, 1, 0, 1, 1)
+
+        // Unbound cycle
         const unboundCycle = this.makeHotkeyButton('unbound-cycle', settings, win);
         this.addToPage(page, 'Unbound cycle', unboundCycle, null, null, null, null, null, 'Cycle through apps that aren\'t bound to a hotkey in the other tab', null);
     }

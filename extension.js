@@ -66,7 +66,7 @@ export default class HappyAppyHotkeyExtension extends Extension {
             return;
         }
 
-        const wins = global.get_window_actors();
+        const wins = this.getAllWindows();
         for (let i = 0; i <= wins.length; i++) {
             const win = wins[i] && wins[i].get_meta_window();
             if (win) {
@@ -82,7 +82,7 @@ export default class HappyAppyHotkeyExtension extends Extension {
 
     unboundCycle() {
         const activeWin = this.getActiveWindow();
-        const wins = global.get_window_actors();
+        const wins = this.getAllWindows();
         let position = -1;
 
         if (activeWin) {
@@ -104,6 +104,17 @@ export default class HappyAppyHotkeyExtension extends Extension {
                     break;
                 }
             }
+        }
+    }
+
+    getAllWindows() {
+        const wins = global.get_window_actors();
+        if (this.settings.get_boolean('restrict-to-current-workspace')) {
+            const workspace = global.get_workspace_manager().get_active_workspace().index();
+            return wins.filter(wa => wa.get_meta_window().get_workspace().index() == workspace);
+        }
+        else {
+            return wins;
         }
     }
 
