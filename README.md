@@ -15,6 +15,24 @@ Get it on [extensions.gnome.org](https://extensions.gnome.org/extension/6057/hap
 - Optionally restrict hotkeys to current workspace
 - Supports Wayland
 
+# Exporting and importing
+
+Sometimes you want to share hotkeys between different machines, or to save them when you need to do a re-install. You can use `dconf` for this. It's already installed on your system.
+
+Open a terminal and run this command:
+
+```sh
+dconf dump /org/gnome/shell/extensions/happy-appy-hotkey/ > happy-appy-hotkey-settings.dconf
+```
+
+You can save the `happy-appy-hotkey-settings.dconf` file somewhere safe. When you need to import them again, you can run this:
+
+```sh
+dconf load /org/gnome/shell/extensions/happy-appy-hotkey/ < happy-appy-hotkey-settings.dconf
+```
+
+Your settings should take effect immediately.
+
 # Motivation
 
 I'm a keyboard oriented person and I like to use it to switch apps. However, I think Alt+Tab is too slow and imprecise, especially if you want to jump to a specific app that isn't the last one that you used.
