@@ -5,6 +5,7 @@
   "url": "https://github.com/jqno/gnome-happy-appy-hotkey/",
   "version": 1,
   "shell-version": [
-    "45"
+    "45",
+    "46"
   ]
 }
