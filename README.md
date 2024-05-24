@@ -15,6 +15,10 @@ Get it on [extensions.gnome.org](https://extensions.gnome.org/extension/6057/hap
 - Optionally restrict hotkeys to current workspace
 - Supports Wayland
 
+# Troubleshooting
+
+If this extension behaves erratically (for instance, it takes half a second for a window to be activated, or the 'unbound cycle' feature doesn't activate an app when an app without a hotkey is clearly running), make sure the desktop files you're running have the `StartupWMClass` property defined. If you're using an AppImage and you created the desktop file manually, this is likely to be the cause.
+
 # Exporting and importing
 
 Sometimes you want to share hotkeys between different machines, or to save them when you need to do a re-install. You can use `dconf` for this. It's already installed on your system.
