@@ -108,7 +108,9 @@ export default class HappyAppyHotkeyExtension extends Extension {
     }
 
     getAllWindows() {
-        const wins = global.get_window_actors();
+        const wins = global.get_window_actors()
+            .filter(wa => !wa.get_meta_window().is_override_redirect());
+
         if (this.settings.get_boolean('restrict-to-current-workspace')) {
             const workspace = global.get_workspace_manager().get_active_workspace().index();
             return wins.filter(wa => wa.get_meta_window().get_workspace().index() == workspace);
