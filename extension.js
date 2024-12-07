@@ -66,17 +66,48 @@ export default class HappyAppyHotkeyExtension extends Extension {
             return;
         }
 
+        const appWindows = [];
+        let activeAppWindow = null;
+        let topmostAppWindow = null;
+        let mostRecentTime = 0;
+
         const wins = this.getAllWindows();
         for (let i = 0; i <= wins.length; i++) {
             const win = wins[i] && wins[i].get_meta_window();
             if (win) {
                 const winApp = this.tracker.get_window_app(win);
                 if (winApp.get_id() === definedApp.get_id()) {
-                    this.activate(win);
-                    return;
+                    appWindows.push(win);
+
+                    // The app is already active; prepare for cycling
+                    if (win.has_focus()) {
+                        activeAppWindow = win;
+                    }
+
+                    // Determine which window was used last
+                    const userTime = win.get_user_time();
+                    if (userTime > mostRecentTime) {
+                        mostRecentTime = userTime;
+                        topmostAppWindow = win;
+                    }
                 }
             }
         }
+
+        if (appWindows.length > 0) {
+            if (activeAppWindow) {
+                // App was already active; cycle through its windows
+                const currentIndex = appWindows.indexOf(activeAppWindow);
+                const nextIndex = (currentIndex + 1) % appWindows.length;
+                this.activate(appWindows[nextIndex]);
+            }
+            else {
+                // App wasn't active already; activate most recently used
+                this.activate(topmostAppWindow);
+            }
+            return;
+        }
+
         definedApp.launch([], null);
     }
 
