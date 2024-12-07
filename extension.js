@@ -39,7 +39,10 @@ export default class HappyAppyHotkeyExtension extends Extension {
             .filter(ai => ai.should_show());
 
         for (let i = 0; i < MAX_NUMBER; i++) {
-            this.apps[i] = existingApps.find(a => this.isMatchingApp(a, this.settings.get_string(`app-${i}`)));
+            this.apps[i] = [
+                existingApps.find(a => this.isMatchingApp(a, this.settings.get_string(`app-${i}`))),
+                this.settings.get_boolean(`start-${i}`)
+            ];
         }
     }
 
@@ -61,7 +64,13 @@ export default class HappyAppyHotkeyExtension extends Extension {
         return app && app.get_name() && name && app.get_name().toLowerCase() === name.toLowerCase();
     }
 
-    focusOrLaunch(definedApp) {
+    focusOrLaunch(tuple) {
+        if (!tuple) {
+            return;
+        }
+
+        const definedApp = tuple[0];
+        const shouldLaunch = tuple[1];
         if (!definedApp) {
             return;
         }
@@ -108,7 +117,9 @@ export default class HappyAppyHotkeyExtension extends Extension {
             return;
         }
 
-        definedApp.launch([], null);
+        if (shouldLaunch) {
+            definedApp.launch([], null);
+        }
     }
 
     unboundCycle() {
@@ -163,6 +174,7 @@ export default class HappyAppyHotkeyExtension extends Extension {
 
     appIsBound(app) {
         for (const a of this.apps) {
+            const app = a[0];
             if (a && app.get_id() === a.get_id()) {
                 return true;
             }

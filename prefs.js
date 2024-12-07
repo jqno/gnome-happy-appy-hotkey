@@ -36,7 +36,7 @@ export default class HappyAppyHotkeyPreferences extends ExtensionPreferences {
 
         // Unbound cycle
         const unboundCycle = this.makeHotkeyButton('unbound-cycle', settings, win);
-        this.addToPage(page, 'Unbound cycle', unboundCycle, null, null, null, null, null, 'Cycle through apps that aren\'t bound to a hotkey in the other tab', null);
+        this.addToPage(page, 'Unbound cycle', unboundCycle, null, null, null, null, null, null, null, 'Cycle through apps that aren\'t bound to a hotkey in the other tab', null);
     }
 
     addAppHotkeyPage(win, settings) {
@@ -69,6 +69,7 @@ export default class HappyAppyHotkeyPreferences extends ExtensionPreferences {
     makeAppHotkey(i, page, settings, parentWin) {
         const hotkeyBtn = this.makeHotkeyButton(i, settings, parentWin);
         const [app, appBtn] = this.makeApp(i, settings, parentWin);
+        const startCheckbox = this.makeCheckbox(i, settings);
 
         const delBtn = new Gtk.Button({
             label: 'Remove hotkey'
@@ -77,7 +78,7 @@ export default class HappyAppyHotkeyPreferences extends ExtensionPreferences {
             this.deleteHotkey(i, page, settings);
         })
 
-        const handle = this.addToPage(page, 'Hotkey', hotkeyBtn, delBtn, 'App', app, appBtn, null, null);
+        const handle = this.addToPage(page, 'Hotkey', hotkeyBtn, delBtn, 'App', app, appBtn, 'Launch if necessary:', startCheckbox, null, null);
         hotkeyHandles.push(handle);
     }
 
@@ -123,6 +124,16 @@ export default class HappyAppyHotkeyPreferences extends ExtensionPreferences {
         settings.bind(appKey, app, 'text', Gio.SettingsBindFlags.DEFAULT);
 
         return [app, appBtn];
+    }
+
+    makeCheckbox(i, settings) {
+        const appKey = `start-${i}`;
+
+        const box = new Gtk.CheckButton();
+
+        settings.bind(appKey, box, 'active', Gio.SettingsBindFlags.DEFAULT);
+
+        return box;
     }
 
     addHotkey(page, settings, parentWin) {
@@ -306,7 +317,7 @@ export default class HappyAppyHotkeyPreferences extends ExtensionPreferences {
         textbox.set_text(appName);
     }
 
-    addToPage(page, labelText1, widget1, button1, labelText2, widget2, button2, explanationText1, explanationText2) {
+    addToPage(page, labelText1, widget1, button1, labelText2, widget2, button2, labelText3, widget3, explanationText1, explanationText2) {
         const [handle, grid] = this.createGrid(page);
 
         const label1 = new Gtk.Label({
@@ -328,6 +339,15 @@ export default class HappyAppyHotkeyPreferences extends ExtensionPreferences {
             grid.attach(label2, 0, 1, 1, 1);
             grid.attach(widget2, 1, 1, 1, 1);
             grid.attach(button2, 2, 1, 1, 1);
+        }
+
+        if (widget3) {
+            const label3 = new Gtk.Label({
+                halign: Gtk.Align.START,
+                label: `${labelText3}`
+            });
+            grid.attach(label3, 0, 2, 1, 1);
+            grid.attach(widget3, 1, 2, 1, 1);
         }
 
         if (explanationText1) {
