@@ -10,7 +10,7 @@ Get it on [extensions.gnome.org](https://extensions.gnome.org/extension/6057/hap
 
 - Assign a hotkey to an app to
   - Give it focus if it's already running, or
-  - Launch it if it's not.
+  - Launch it if it's not (optionally).
 - Assign a hotkey to cycle through all the apps that don't have a hotkey
 - Optionally restrict hotkeys to current workspace
 - Supports Wayland
