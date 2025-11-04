@@ -152,9 +152,11 @@ export default class HappyAppyHotkeyPreferences extends ExtensionPreferences {
         for (let i = index; i < n; i++) {
             settings.set_strv(`hotkey-${i}`, settings.get_strv(`hotkey-${i + 1}`));
             settings.set_string(`app-${i}`, settings.get_string(`app-${i + 1}`));
+            settings.set_boolean(`start-${i}`, settings.get_boolean(`start-${i + 1}`));
         }
         settings.reset(`hotkey-${n}`);
         settings.reset(`app-${n}`);
+        settings.reset(`start-${n}`);
 
         page.remove(hotkeyHandles[n]);
         hotkeyHandles.pop();
