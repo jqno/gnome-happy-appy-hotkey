@@ -183,7 +183,6 @@ export default class HappyAppyHotkeyExtension extends Extension {
 
     activate(win) {
         const now = global.get_current_time();
-        win.activate(now);
-        win.focus(now);
+        win.get_workspace().activate_with_focus(win, now);
     }
 }
