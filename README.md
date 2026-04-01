@@ -38,6 +38,17 @@ dconf load /org/gnome/shell/extensions/happy-appy-hotkey/ < happy-appy-hotkey-se
 
 Your settings should take effect immediately.
 
+# Installing manually
+
+To install manually, follow these steps:
+
+- Uninstall this extension if you have installed it previously from [extensions.gnome.org](https://extensions.gnome.org/) or the GNOME Extension Manager,
+- Create a suitable directory and navigate to it in a terminal,
+- Run `git clone git@github.com:jqno/gnome-happy-appy-hotkey.git`,
+- Run `cd gnome-happy-appy-hotkey`,
+- Run `./build local`,
+- Log out and log back in.
+
 # Motivation
 
 I'm a keyboard oriented person and I like to use it to switch apps. However, I think Alt+Tab is too slow and imprecise, especially if you want to jump to a specific app that isn't the last one that you used.
