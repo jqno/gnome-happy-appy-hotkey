@@ -69,7 +69,8 @@ export default class HappyAppyHotkeyPreferences extends ExtensionPreferences {
     makeAppHotkey(i, page, settings, parentWin) {
         const hotkeyBtn = this.makeHotkeyButton(i, settings, parentWin);
         const [app, appBtn] = this.makeApp(i, settings, parentWin);
-        const startCheckbox = this.makeCheckbox(i, settings);
+        const startCheckbox = this.makeLaunchCheckbox(i, settings);
+        const moveCheckbox = this.makeMoveCheckbox(i, settings);
 
         const delBtn = new Gtk.Button({
             label: 'Remove hotkey'
@@ -78,7 +79,7 @@ export default class HappyAppyHotkeyPreferences extends ExtensionPreferences {
             this.deleteHotkey(i, page, settings);
         })
 
-        const handle = this.addToPage(page, 'Hotkey', hotkeyBtn, delBtn, 'App', app, appBtn, 'Launch if necessary:', startCheckbox, null, null);
+        const handle = this.addToPage(page, 'Hotkey', hotkeyBtn, delBtn, 'App', app, appBtn, 'Launch if necessary:', startCheckbox, null, null, 'Move to current workspace:', moveCheckbox);
         hotkeyHandles.push(handle);
     }
 
@@ -126,7 +127,7 @@ export default class HappyAppyHotkeyPreferences extends ExtensionPreferences {
         return [app, appBtn];
     }
 
-    makeCheckbox(i, settings) {
+    makeLaunchCheckbox(i, settings) {
         const appKey = `start-${i}`;
 
         const box = new Gtk.CheckButton();
@@ -134,6 +135,19 @@ export default class HappyAppyHotkeyPreferences extends ExtensionPreferences {
         settings.bind(appKey, box, 'active', Gio.SettingsBindFlags.DEFAULT);
 
         return box;
+    }
+
+    makeMoveCheckbox(i, settings) {
+        const checkbox = new Gtk.CheckButton();
+        settings.bind(`move-${i}`, checkbox, 'active', Gio.SettingsBindFlags.DEFAULT);
+
+        const updateSensitivity = () => {
+            checkbox.sensitive = !settings.get_boolean('restrict-to-current-workspace');
+        };
+        updateSensitivity();
+        settings.connect('changed::restrict-to-current-workspace', updateSensitivity);
+
+        return checkbox;
     }
 
     addHotkey(page, settings, parentWin) {
@@ -153,10 +167,12 @@ export default class HappyAppyHotkeyPreferences extends ExtensionPreferences {
             settings.set_strv(`hotkey-${i}`, settings.get_strv(`hotkey-${i + 1}`));
             settings.set_string(`app-${i}`, settings.get_string(`app-${i + 1}`));
             settings.set_boolean(`start-${i}`, settings.get_boolean(`start-${i + 1}`));
+            settings.set_boolean(`move-${i}`, settings.get_boolean(`move-${i + 1}`));
         }
         settings.reset(`hotkey-${n}`);
         settings.reset(`app-${n}`);
         settings.reset(`start-${n}`);
+        settings.reset(`move-${n}`);
 
         page.remove(hotkeyHandles[n]);
         hotkeyHandles.pop();
@@ -319,7 +335,7 @@ export default class HappyAppyHotkeyPreferences extends ExtensionPreferences {
         textbox.set_text(appName);
     }
 
-    addToPage(page, labelText1, widget1, button1, labelText2, widget2, button2, labelText3, widget3, explanationText1, explanationText2) {
+    addToPage(page, labelText1, widget1, button1, labelText2, widget2, button2, labelText3, widget3, explanationText1, explanationText2, labelText4, widget4) {
         const [handle, grid] = this.createGrid(page);
 
         const label1 = new Gtk.Label({
@@ -352,6 +368,15 @@ export default class HappyAppyHotkeyPreferences extends ExtensionPreferences {
             grid.attach(widget3, 1, 2, 1, 1);
         }
 
+        if (widget4) {
+            const label4 = new Gtk.Label({
+                halign: Gtk.Align.START,
+                label: `${labelText4}`
+            });
+            grid.attach(label4, 0, 3, 1, 1);
+            grid.attach(widget4, 1, 3, 1, 1);
+        }
+
         if (explanationText1) {
             const explanation = new Gtk.Label({
                 label: `<small>${explanationText1}</small>`,
@@ -366,7 +391,7 @@ export default class HappyAppyHotkeyPreferences extends ExtensionPreferences {
                 halign: Gtk.Align.END,
                 use_markup: true
             });
-            grid.attach(explanation, 0, 3, 3, 1);
+            grid.attach(explanation, 0, 4, 3, 1);
         }
 
         return handle;

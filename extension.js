@@ -41,7 +41,8 @@ export default class HappyAppyHotkeyExtension extends Extension {
         for (let i = 0; i < MAX_NUMBER; i++) {
             this.apps[i] = [
                 existingApps.find(a => this.isMatchingApp(a, this.settings.get_string(`app-${i}`))),
-                this.settings.get_boolean(`start-${i}`)
+                this.settings.get_boolean(`start-${i}`),
+                this.settings.get_boolean(`move-${i}`)
             ];
         }
     }
@@ -71,6 +72,7 @@ export default class HappyAppyHotkeyExtension extends Extension {
 
         const definedApp = tuple[0];
         const shouldLaunch = tuple[1];
+        const shouldMove = tuple[2];
         if (!definedApp) {
             return;
         }
@@ -108,11 +110,11 @@ export default class HappyAppyHotkeyExtension extends Extension {
                 // App was already active; cycle through its windows
                 const currentIndex = appWindows.indexOf(activeAppWindow);
                 const nextIndex = (currentIndex + 1) % appWindows.length;
-                this.activate(appWindows[nextIndex]);
+                this.activate(appWindows[nextIndex], shouldMove);
             }
             else {
                 // App wasn't active already; activate most recently used
-                this.activate(topmostAppWindow);
+                this.activate(topmostAppWindow, shouldMove);
             }
             return;
         }
@@ -155,7 +157,7 @@ export default class HappyAppyHotkeyExtension extends Extension {
 
         if (this.settings.get_boolean('restrict-to-current-workspace')) {
             const workspace = global.get_workspace_manager().get_active_workspace().index();
-            return wins.filter(wa => wa.get_meta_window().get_workspace().index() == workspace);
+            return wins.filter(wa => wa.get_meta_window().get_workspace().index() === workspace);
         }
         else {
             return wins;
@@ -181,8 +183,15 @@ export default class HappyAppyHotkeyExtension extends Extension {
         return false;
     }
 
-    activate(win) {
+    activate(win, shouldMove = false) {
         const now = global.get_current_time();
-        win.get_workspace().activate_with_focus(win, now);
+        if (shouldMove && !this.settings.get_boolean('restrict-to-current-workspace')) {
+            const currentWorkspace = global.get_workspace_manager().get_active_workspace();
+            win.change_workspace(currentWorkspace);
+            currentWorkspace.activate_with_focus(win, now);
+        }
+        else {
+            win.get_workspace().activate_with_focus(win, now);
+        }
     }
 }

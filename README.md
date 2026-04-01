@@ -13,6 +13,7 @@ Get it on [extensions.gnome.org](https://extensions.gnome.org/extension/6057/hap
   - Launch it if it's not (optionally).
 - Assign a hotkey to cycle through all the apps that don't have a hotkey
 - Optionally restrict hotkeys to current workspace
+- Optionally move an app to the current workspace
 - Supports Wayland
 
 # Troubleshooting
