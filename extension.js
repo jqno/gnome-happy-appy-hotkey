@@ -62,7 +62,13 @@ export default class HappyAppyHotkeyExtension extends Extension {
     }
 
     isMatchingApp(app, name) {
-        return app && app.get_name() && name && app.get_name().toLowerCase() === name.toLowerCase();
+        if (!app || !name) {
+            return false;
+        }
+        if (app.get_id() && app.get_id().toLowerCase() === name.toLowerCase()) {
+            return true;
+        }
+        return app.get_name() && app.get_name().toLowerCase() === name.toLowerCase();
     }
 
     focusOrLaunch(tuple) {

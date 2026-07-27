@@ -290,11 +290,20 @@ export default class HappyAppyHotkeyPreferences extends ExtensionPreferences {
         box.append(scrolledWindow);
 
         const listStore = new Gtk.ListStore();
-        listStore.set_column_types([GObject.TYPE_STRING]);
+        listStore.set_column_types([GObject.TYPE_STRING, GObject.TYPE_STRING]);
         listStore.set_sort_column_id(0, Gtk.SortType.ASCENDING);
-        this.getInstalledApps().forEach(a => {
+        const apps = this.getInstalledApps();
+        const nameCounts = new Map();
+        apps.forEach(a => {
+            nameCounts.set(a.name, (nameCounts.get(a.name) ?? 0) + 1);
+        });
+        apps.forEach(a => {
             const iter = listStore.append();
-            listStore.set(iter, [0], [a]);
+            let label = a.name;
+            if (nameCounts.get(a.name) > 1) {
+                label = `${a.name} (${a.id})`;
+            }
+            listStore.set(iter, [0, 1], [label, a.id]);
         })
 
         const appNameColumn = new Gtk.TreeViewColumn({ title: 'Application name' });
@@ -316,8 +325,8 @@ export default class HappyAppyHotkeyPreferences extends ExtensionPreferences {
             if (responseId === Gtk.ResponseType.OK) {
                 const [success, model, iter] = selection.get_selected();
                 if (success) {
-                    const appName = model.get_value(iter, 0);
-                    this.updateApp(textbox, appName);
+                    const appId = model.get_value(iter, 1);
+                    this.updateApp(textbox, appId);
                 }
             }
             dialog.destroy();
@@ -328,11 +337,11 @@ export default class HappyAppyHotkeyPreferences extends ExtensionPreferences {
     getInstalledApps() {
         return Gio.AppInfo.get_all()
             .filter(ai => ai.should_show())
-            .map(ai => ai.get_name());
+            .map(ai => ({ name: ai.get_name(), id: ai.get_id() }));
     }
 
-    updateApp(textbox, appName) {
-        textbox.set_text(appName);
+    updateApp(textbox, app) {
+        textbox.set_text(app);
     }
 
     addToPage(page, labelText1, widget1, button1, labelText2, widget2, button2, labelText3, widget3, explanationText1, explanationText2, labelText4, widget4) {
