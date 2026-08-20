@@ -29,6 +29,9 @@
             <default>false</default>
             <summary>Move to current workspace 0</summary>
         </key>
+        <key type="b" name="hide-if-focused-0">
+            <default>false</default>
+        </key>
         <key type="as" name="hotkey-1">
             <default><![CDATA[['']]]></default>
             <summary>Hotkey 1</summary>
@@ -44,6 +47,9 @@
         <key type="b" name="move-1">
             <default>false</default>
             <summary>Move to current workspace 1</summary>
+        </key>
+        <key type="b" name="hide-if-focused-1">
+            <default>false</default>
         </key>
         <key type="as" name="hotkey-2">
             <default><![CDATA[['']]]></default>
@@ -61,6 +67,9 @@
             <default>false</default>
             <summary>Move to current workspace 2</summary>
         </key>
+        <key type="b" name="hide-if-focused-2">
+            <default>false</default>
+        </key>
         <key type="as" name="hotkey-3">
             <default><![CDATA[['']]]></default>
             <summary>Hotkey 3</summary>
@@ -76,6 +85,9 @@
         <key type="b" name="move-3">
             <default>false</default>
             <summary>Move to current workspace 3</summary>
+        </key>
+        <key type="b" name="hide-if-focused-3">
+            <default>false</default>
         </key>
         <key type="as" name="hotkey-4">
             <default><![CDATA[['']]]></default>
@@ -93,6 +105,9 @@
             <default>false</default>
             <summary>Move to current workspace 4</summary>
         </key>
+        <key type="b" name="hide-if-focused-4">
+            <default>false</default>
+        </key>
         <key type="as" name="hotkey-5">
             <default><![CDATA[['']]]></default>
             <summary>Hotkey 5</summary>
@@ -108,6 +123,9 @@
         <key type="b" name="move-5">
             <default>false</default>
             <summary>Move to current workspace 5</summary>
+        </key>
+        <key type="b" name="hide-if-focused-5">
+            <default>false</default>
         </key>
         <key type="as" name="hotkey-6">
             <default><![CDATA[['']]]></default>
@@ -125,6 +143,9 @@
             <default>false</default>
             <summary>Move to current workspace 6</summary>
         </key>
+        <key type="b" name="hide-if-focused-6">
+            <default>false</default>
+        </key>
         <key type="as" name="hotkey-7">
             <default><![CDATA[['']]]></default>
             <summary>Hotkey 7</summary>
@@ -140,6 +161,9 @@
         <key type="b" name="move-7">
             <default>false</default>
             <summary>Move to current workspace 7</summary>
+        </key>
+        <key type="b" name="hide-if-focused-7">
+            <default>false</default>
         </key>
         <key type="as" name="hotkey-8">
             <default><![CDATA[['']]]></default>
@@ -157,6 +181,9 @@
             <default>false</default>
             <summary>Move to current workspace 8</summary>
         </key>
+        <key type="b" name="hide-if-focused-8">
+            <default>false</default>
+        </key>
         <key type="as" name="hotkey-9">
             <default><![CDATA[['']]]></default>
             <summary>Hotkey 9</summary>
@@ -172,6 +199,9 @@
         <key type="b" name="move-9">
             <default>false</default>
             <summary>Move to current workspace 9</summary>
+        </key>
+        <key type="b" name="hide-if-focused-9">
+            <default>false</default>
         </key>
         <key type="as" name="hotkey-10">
             <default><![CDATA[['']]]></default>
@@ -189,6 +219,9 @@
             <default>false</default>
             <summary>Move to current workspace 10</summary>
         </key>
+        <key type="b" name="hide-if-focused-10">
+            <default>false</default>
+        </key>
         <key type="as" name="hotkey-11">
             <default><![CDATA[['']]]></default>
             <summary>Hotkey 11</summary>
@@ -204,6 +237,9 @@
         <key type="b" name="move-11">
             <default>false</default>
             <summary>Move to current workspace 11</summary>
+        </key>
+        <key type="b" name="hide-if-focused-11">
+            <default>false</default>
         </key>
         <key type="as" name="hotkey-12">
             <default><![CDATA[['']]]></default>
@@ -221,6 +257,9 @@
             <default>false</default>
             <summary>Move to current workspace 12</summary>
         </key>
+        <key type="b" name="hide-if-focused-12">
+            <default>false</default>
+        </key>
         <key type="as" name="hotkey-13">
             <default><![CDATA[['']]]></default>
             <summary>Hotkey 13</summary>
@@ -236,6 +275,9 @@
         <key type="b" name="move-13">
             <default>false</default>
             <summary>Move to current workspace 13</summary>
+        </key>
+        <key type="b" name="hide-if-focused-13">
+            <default>false</default>
         </key>
         <key type="as" name="hotkey-14">
             <default><![CDATA[['']]]></default>
@@ -253,6 +295,9 @@
             <default>false</default>
             <summary>Move to current workspace 14</summary>
         </key>
+        <key type="b" name="hide-if-focused-14">
+            <default>false</default>
+        </key>
         <key type="as" name="hotkey-15">
             <default><![CDATA[['']]]></default>
             <summary>Hotkey 15</summary>
@@ -268,6 +313,9 @@
         <key type="b" name="move-15">
             <default>false</default>
             <summary>Move to current workspace 15</summary>
+        </key>
+        <key type="b" name="hide-if-focused-15">
+            <default>false</default>
         </key>
         <key type="as" name="hotkey-16">
             <default><![CDATA[['']]]></default>
@@ -285,6 +333,9 @@
             <default>false</default>
             <summary>Move to current workspace 16</summary>
         </key>
+        <key type="b" name="hide-if-focused-16">
+            <default>false</default>
+        </key>
         <key type="as" name="hotkey-17">
             <default><![CDATA[['']]]></default>
             <summary>Hotkey 17</summary>
@@ -300,6 +351,9 @@
         <key type="b" name="move-17">
             <default>false</default>
             <summary>Move to current workspace 17</summary>
+        </key>
+        <key type="b" name="hide-if-focused-17">
+            <default>false</default>
         </key>
         <key type="as" name="hotkey-18">
             <default><![CDATA[['']]]></default>
@@ -317,6 +371,9 @@
             <default>false</default>
             <summary>Move to current workspace 18</summary>
         </key>
+        <key type="b" name="hide-if-focused-18">
+            <default>false</default>
+        </key>
         <key type="as" name="hotkey-19">
             <default><![CDATA[['']]]></default>
             <summary>Hotkey 19</summary>
@@ -332,6 +389,9 @@
         <key type="b" name="move-19">
             <default>false</default>
             <summary>Move to current workspace 19</summary>
+        </key>
+        <key type="b" name="hide-if-focused-19">
+            <default>false</default>
         </key>
     </schema>
 </schemalist>

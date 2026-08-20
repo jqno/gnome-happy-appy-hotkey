@@ -42,7 +42,8 @@ export default class HappyAppyHotkeyExtension extends Extension {
             this.apps[i] = [
                 existingApps.find(a => this.isMatchingApp(a, this.settings.get_string(`app-${i}`))),
                 this.settings.get_boolean(`start-${i}`),
-                this.settings.get_boolean(`move-${i}`)
+                this.settings.get_boolean(`move-${i}`),
+                this.settings.get_boolean(`hide-if-focused-${i}`)
             ];
         }
     }
@@ -79,6 +80,7 @@ export default class HappyAppyHotkeyExtension extends Extension {
         const definedApp = tuple[0];
         const shouldLaunch = tuple[1];
         const shouldMove = tuple[2];
+        const hideIfFocused = tuple[3];
         if (!definedApp) {
             return;
         }
@@ -113,10 +115,16 @@ export default class HappyAppyHotkeyExtension extends Extension {
 
         if (appWindows.length > 0) {
             if (activeAppWindow) {
-                // App was already active; cycle through its windows
-                const currentIndex = appWindows.indexOf(activeAppWindow);
-                const nextIndex = (currentIndex + 1) % appWindows.length;
-                this.activate(appWindows[nextIndex], shouldMove);
+                if (hideIfFocused) {
+                    // Same hotkey toggles the focused app off.
+                    activeAppWindow.minimize();
+                }
+                else {
+                    // App was already active; cycle through its windows
+                    const currentIndex = appWindows.indexOf(activeAppWindow);
+                    const nextIndex = (currentIndex + 1) % appWindows.length;
+                    this.activate(appWindows[nextIndex], shouldMove);
+                }
             }
             else {
                 // App wasn't active already; activate most recently used
