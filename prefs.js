@@ -71,6 +71,7 @@ export default class HappyAppyHotkeyPreferences extends ExtensionPreferences {
         const [app, appBtn] = this.makeApp(i, settings, parentWin);
         const startCheckbox = this.makeLaunchCheckbox(i, settings);
         const moveCheckbox = this.makeMoveCheckbox(i, settings);
+        const hideIfFocusedCheckbox = this.makeHideIfFocusedCheckbox(i, settings);
 
         const delBtn = new Gtk.Button({
             label: 'Remove hotkey'
@@ -79,7 +80,7 @@ export default class HappyAppyHotkeyPreferences extends ExtensionPreferences {
             this.deleteHotkey(i, page, settings);
         })
 
-        const handle = this.addToPage(page, 'Hotkey', hotkeyBtn, delBtn, 'App', app, appBtn, 'Launch if necessary:', startCheckbox, null, null, 'Move to current workspace:', moveCheckbox);
+        const handle = this.addToPage(page, 'Hotkey', hotkeyBtn, delBtn, 'App', app, appBtn, 'Launch if necessary:', startCheckbox, null, null, 'Move to current workspace:', moveCheckbox, 'Hide if focused:', hideIfFocusedCheckbox);
         hotkeyHandles.push(handle);
     }
 
@@ -168,11 +169,13 @@ export default class HappyAppyHotkeyPreferences extends ExtensionPreferences {
             settings.set_string(`app-${i}`, settings.get_string(`app-${i + 1}`));
             settings.set_boolean(`start-${i}`, settings.get_boolean(`start-${i + 1}`));
             settings.set_boolean(`move-${i}`, settings.get_boolean(`move-${i + 1}`));
+            settings.set_boolean(`hide-if-focused-${i}`, settings.get_boolean(`hide-if-focused-${i + 1}`));
         }
         settings.reset(`hotkey-${n}`);
         settings.reset(`app-${n}`);
         settings.reset(`start-${n}`);
         settings.reset(`move-${n}`);
+        settings.reset(`hide-if-focused-${n}`);
 
         page.remove(hotkeyHandles[n]);
         hotkeyHandles.pop();
@@ -344,7 +347,7 @@ export default class HappyAppyHotkeyPreferences extends ExtensionPreferences {
         textbox.set_text(app);
     }
 
-    addToPage(page, labelText1, widget1, button1, labelText2, widget2, button2, labelText3, widget3, explanationText1, explanationText2, labelText4, widget4) {
+    addToPage(page, labelText1, widget1, button1, labelText2, widget2, button2, labelText3, widget3, explanationText1, explanationText2, labelText4, widget4, labelText5, widget5) {
         const [handle, grid] = this.createGrid(page);
 
         const label1 = new Gtk.Label({
@@ -384,6 +387,16 @@ export default class HappyAppyHotkeyPreferences extends ExtensionPreferences {
             });
             grid.attach(label4, 0, 3, 1, 1);
             grid.attach(widget4, 1, 3, 1, 1);
+        }
+        
+        if (widget5) {
+            const label5 = new Gtk.Label({
+                halign: Gtk.Align.START,
+                label: `${labelText5}`
+            });
+
+            grid.attach(label5, 0, 4, 1, 1);
+            grid.attach(widget5, 1, 4, 1, 1);
         }
 
         if (explanationText1) {
@@ -425,5 +438,18 @@ export default class HappyAppyHotkeyPreferences extends ExtensionPreferences {
         row.set_child(grid);
 
         return [group, grid];
+    }
+    
+    makeHideIfFocusedCheckbox(i, settings) {
+        const checkbox = new Gtk.CheckButton();
+
+        settings.bind(
+            `hide-if-focused-${i}`,
+            checkbox,
+            'active',
+            Gio.SettingsBindFlags.DEFAULT
+        );
+
+        return checkbox;
     }
 }
